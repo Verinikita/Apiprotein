@@ -13,7 +13,7 @@ app = Flask(__name__)
 app.config.from_object('localconfig')
 
 # Permitiendo CORS para evitar problemas en ambiente de desarrollo (COMENTAR EN PRODUCCIÓN)
-cors = CORS(app, supports_credentials=True, resources={r'/*': {'origins': 'http://localhost:5500'}})
+cors = CORS(app, supports_credentials=True, resources={r'/*': {'origins': 'http://localhost:500'}})
 
 # Formateando carpeta con ruta absoluta
 FOLDER = os.path.abspath(app.config['UPLOAD_FOLDER'])
