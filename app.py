@@ -1,13 +1,8 @@
-import base64
 import os
-from flask import Flask, request, send_file
-from flask_cors import CORS
+from flask import Flask, request
+from werkzeug.utils import secure_filename
 
-from src.fetch_pdb import phi_psi
-from src.plot import plot
-from src.functions import allowed_file, extractFileByExtension
-
-app = Flask(__name__).run()
+app = Flask(__name__)
 
 # Configuración de CORS (ajústala según sea necesario)
 if os.getenv('VERCEL_ENV') != 'production':
@@ -30,6 +25,8 @@ def upload_file():
         filepath = os.path.join(UPLOAD_FOLDER, filename)
         file.save(filepath)
         return {'msg': 'Archivo subido exitosamente', 'filename': filename}
+
+    return {'msg': 'Error al procesar la solicitud'}, 500
 
     return {'msg': 'Error al procesar la solicitud'}, 500
 
