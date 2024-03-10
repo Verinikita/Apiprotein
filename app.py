@@ -7,13 +7,40 @@ from src.fetch_pdb import phi_psi
 from src.plot import plot
 from src.functions import allowed_file, extractFileByExtension
 
-app = Flask(__name__)
+app = Flask(__name__).run()
+
+# Configuración de CORS (ajústala según sea necesario)
+if os.getenv('VERCEL_ENV') != 'production':
+    cors = CORS(app, supports_credentials=True, resources={r'/*': {'origins': 'http://localhost:5000'}})
+
+UPLOAD_FOLDER = '/tmp'  # Directorio temporal para Vercel
+
+@app.route('/upload', methods=['POST'])
+def upload_file():
+    if 'file' not in request.files:
+        return {'msg': 'No se encontró el archivo en la solicitud'}, 400
+
+    file = request.files['file']
+
+    if file.filename == '':
+        return {'msg': 'No se seleccionó ningún archivo'}, 400
+
+    if file:
+        filename = secure_filename(file.filename)
+        filepath = os.path.join(UPLOAD_FOLDER, filename)
+        file.save(filepath)
+        return {'msg': 'Archivo subido exitosamente', 'filename': filename}
+
+    return {'msg': 'Error al procesar la solicitud'}, 500
+
+
+
 
 # Obteniendo configuración por default de archivo
 app.config.from_object('localconfig')
 
 # Permitiendo CORS para evitar problemas en ambiente de desarrollo (COMENTAR EN PRODUCCIÓN)
-cors = CORS(app, supports_credentials=True, resources={r'/*': {'origins': 'http://localhost:500'}})
+#cors = CORS(app, supports_credentials=True, resources={r'/*': {'origins': 'http://localhost:500'}})
 
 # Formateando carpeta con ruta absoluta
 FOLDER = os.path.abspath(app.config['UPLOAD_FOLDER'])
@@ -101,5 +128,4 @@ def get_plots():
     #return send_file(plot_proceed, mimetype='image/png')
     return {'msg': 'Éxito', 'data': encoded_image}
 
-if __name__ == '__main__':
-   app.run()
+
