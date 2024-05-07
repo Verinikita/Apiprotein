@@ -103,8 +103,7 @@ def get_plots():
 
 if __name__ == '__main__':
    app.run()
-
-    return {'msg': 'Error al procesar la solicitud'}, 500
+    
 
 
 
